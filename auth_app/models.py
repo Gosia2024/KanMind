@@ -3,6 +3,10 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
+    """
+    Custom user manager for creating users with email as the unique identifier.
+    Required by Django when using a custom User model (AbstractBaseUser).
+    """
     def create_user(self, email, fullname, password=None, **extra_fields):
         if not email:
             raise ValueError("Email is required")
@@ -24,6 +28,11 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    """
+    Custom User model.
+    - Uses email as USERNAME_FIELD (login via email).
+    - Stores fullname for display purposes.
+    """
     email = models.EmailField(unique=True)
     fullname = models.CharField(max_length=150)
     is_active = models.BooleanField(default=True)

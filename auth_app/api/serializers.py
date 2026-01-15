@@ -13,6 +13,12 @@ class RegistrationSerializer(serializers.Serializer):
     repeated_password = serializers.CharField(write_only=True, min_length=8)
 
     def validate(self, attrs):
+        """
+        Validates:
+        - password matches repeated_password
+        - email is unique
+        - password passes Django password validators
+        """
         if attrs["password"] != attrs["repeated_password"]:
             raise serializers.ValidationError({"repeated_password": "Passwords do not match."})
 
@@ -32,6 +38,7 @@ class RegistrationSerializer(serializers.Serializer):
 
 
 class LoginSerializer(serializers.Serializer):
+    """Validates credentials (email + password)."""
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 

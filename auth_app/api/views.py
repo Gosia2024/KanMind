@@ -10,6 +10,11 @@ User = get_user_model()
 
 
 class RegistrationView(APIView):
+    """
+    POST /api/registration/
+    Creates a new user and returns an auth token + basic user info.
+    Permissions: AllowAny
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -29,6 +34,11 @@ class RegistrationView(APIView):
 
 
 class LoginView(APIView):
+    """
+    POST /api/login/
+    Authenticates user by email/password and returns an auth token + user info.
+    Permissions: AllowAny
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -48,6 +58,11 @@ class LoginView(APIView):
 
 
 class EmailCheckView(APIView):
+    """
+    GET /api/email-check/?email=...
+    Checks if a user with a given email exists and returns basic user info.
+    Permissions: IsAuthenticated
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
