@@ -64,9 +64,6 @@ class ReviewingView(APIView):
         return Response(serializer.data)
 
 
-# -----------------------------
-#       COMMENTS ENDPOINTS
-# -----------------------------
 
 class TaskCommentListCreateView(generics.ListCreateAPIView):
     """
