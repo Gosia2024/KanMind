@@ -18,7 +18,7 @@ Follow these steps to run the project locally.
 
 ### 1. Clone repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/Gosia2024/KanMind.git
 cd KanMind
 ````
 
