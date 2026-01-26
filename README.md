@@ -2,7 +2,7 @@
 
 # KanMind – Backend API 🧠
 
-````bash
+
 
 KanMind is a **RESTful backend API** built with **Django** and **Django REST Framework**.  
 It provides authentication, board management, task handling, and commenting features
@@ -53,6 +53,8 @@ API will be available at:
 ## 📚 Table of Contents
 
 - [KanMind – Backend API 🧠](#kanmind--backend-api-)
+  - [🚀 Quickstart](#-quickstart)
+    - [1. Clone repository](#1-clone-repository)
   - [2. Create virtual environment](#2-create-virtual-environment)
     - [3. Install dependencies](#3-install-dependencies)
     - [4. Apply migrations](#4-apply-migrations)
