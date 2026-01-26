@@ -26,7 +26,10 @@ SECRET_KEY = 'django-insecure-fnd1(o6c4+pd2+7y-qe-gs(k=$cc(jemh0*6!p&eqz%2gz6i7e
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+]
 
 # Application definition
 
@@ -37,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
       # Third-party
     "rest_framework",
     "rest_framework.authtoken",
@@ -45,7 +49,7 @@ INSTALLED_APPS = [
     "auth_app",
     "boards_app",
     "tasks_app",
-    "comments_app",
+  
 ]
 
 MIDDLEWARE = [
@@ -56,6 +60,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -139,3 +145,4 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
 }
+# APPEND_SLASH = True
