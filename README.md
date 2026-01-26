@@ -20,7 +20,7 @@ Follow these steps to run the project locally.
 ```bash
 git clone https://github.com/Gosia2024/KanMind.git
 cd KanMind
-````
+```
 
 ## 2. Create virtual environment
 
