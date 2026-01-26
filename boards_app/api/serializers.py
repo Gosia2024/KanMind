@@ -13,6 +13,10 @@ class UserPublicSerializer(serializers.ModelSerializer):
 
 
 class BoardListSerializer(serializers.ModelSerializer):
+    """
+    Serializer for listing boards.
+    Includes aggregated counters like members and tasks.
+    """
     member_count = serializers.IntegerField(read_only=True)
     ticket_count = serializers.IntegerField(read_only=True)
     tasks_to_do_count = serializers.IntegerField(read_only=True)
@@ -33,6 +37,10 @@ class BoardListSerializer(serializers.ModelSerializer):
 
 
 class BoardCreateUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating and updating boards.
+    Handles member assignment.
+    """
     members = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=User.objects.all(),
@@ -63,6 +71,9 @@ class BoardCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class BoardDetailSerializer(serializers.ModelSerializer):
+    """
+    Detailed board view including members and tasks.
+    """
     owner_id = serializers.IntegerField(source="owner.id", read_only=True)
     members = UserPublicSerializer(many=True, read_only=True)
     tasks = TaskSerializer(many=True, read_only=True)
@@ -72,6 +83,9 @@ class BoardDetailSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "owner_id", "members", "tasks"]
 
 class BoardUpdateResponseSerializer(serializers.ModelSerializer):
+    """
+    Serializer used as response after board update.
+    """
     owner_data = UserPublicSerializer(source="owner", read_only=True)
     members_data = UserPublicSerializer(source="members", many=True, read_only=True)
 
