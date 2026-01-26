@@ -17,36 +17,33 @@ for a Kanban-style application.
 Follow these steps to run the project locally.
 
 ### 1. Clone repository
-```bash
+
 git clone https://github.com/Gosia2024/KanMind.git
 cd KanMind
-```
+
 
 ## 2. Create virtual environment
 
-```bash
+
 python -m venv .venv
 source .venv/bin/activate        # Linux / macOS
 .venv\Scripts\activate           # Windows
-```
+
 
 ### 3. Install dependencies
 
-```bash
 pip install -r requirements.txt
-```
+
 
 ### 4. Apply migrations
 
-```bash
+
 python manage.py migrate
-```
 
 ### 5. Run development server
 
-```bash
+
 python manage.py runserver
-```
 
 API will be available at:
 👉 **[http://127.0.0.1:8000/api/](http://127.0.0.1:8000/api/)**
@@ -114,23 +111,22 @@ Authentication is handled via **Token Authentication**.
 
 ### Register
 
-```bash
+
 POST /api/registration/
-```
+
 
 ### Login
 
-```bash
+
 POST /api/login/
-```
+
 
 The response contains an authentication token.
 
 All authenticated requests must include the header:
 
-```bash
+
 Authorization: Token <your_token>
-```
 
 ---
 
