@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-
 from boards_app.models import Board
+from tasks_app.api.serializers import TaskSerializer
 
 User = get_user_model()
 
@@ -13,7 +13,6 @@ class UserPublicSerializer(serializers.ModelSerializer):
 
 
 class BoardListSerializer(serializers.ModelSerializer):
-    """Serializer for GET /api/boards/{id}/ (board + members)."""
     member_count = serializers.IntegerField(read_only=True)
     ticket_count = serializers.IntegerField(read_only=True)
     tasks_to_do_count = serializers.IntegerField(read_only=True)
@@ -34,47 +33,48 @@ class BoardListSerializer(serializers.ModelSerializer):
 
 
 class BoardCreateUpdateSerializer(serializers.ModelSerializer):
-    members = serializers.ListField(
-        child=serializers.IntegerField(),
+    members = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=User.objects.all(),
         required=False,
-        allow_empty=True,
     )
 
     class Meta:
         model = Board
         fields = ["title", "members"]
 
-    def validate_members(self, value):
-        # ensure all users exist
-        if not value:
-            return []
-        existing = set(User.objects.filter(id__in=value).values_list("id", flat=True))
-        missing = [user_id for user_id in value if user_id not in existing]
-        if missing:
-            raise serializers.ValidationError(f"Invalid user ids: {missing}")
-        return value
-
     def create(self, validated_data):
-        members_ids = validated_data.pop("members", [])
-        board = Board.objects.create(owner=self.context["request"].user, **validated_data)
-        if members_ids:
-            board.members.set(members_ids)
+        members = validated_data.pop("members", [])
+        board = Board.objects.create(
+            owner=self.context["request"].user,
+            **validated_data,
+        )
+        board.members.set(members)
         return board
 
     def update(self, instance, validated_data):
-        members_ids = validated_data.pop("members", None)
+        members = validated_data.pop("members", None)
         instance.title = validated_data.get("title", instance.title)
         instance.save()
 
-        if members_ids is not None:
-            instance.members.set(members_ids)
+        if members is not None:
+            instance.members.set(members)
         return instance
 
 
 class BoardDetailSerializer(serializers.ModelSerializer):
     owner_id = serializers.IntegerField(source="owner.id", read_only=True)
     members = UserPublicSerializer(many=True, read_only=True)
+    tasks = TaskSerializer(many=True, read_only=True)
 
     class Meta:
         model = Board
-        fields = ["id", "title", "owner_id", "members"]
+        fields = ["id", "title", "owner_id", "members", "tasks"]
+
+class BoardUpdateResponseSerializer(serializers.ModelSerializer):
+    owner_data = UserPublicSerializer(source="owner", read_only=True)
+    members_data = UserPublicSerializer(source="members", many=True, read_only=True)
+
+    class Meta:
+        model = Board
+        fields = ["id", "title", "owner_data", "members_data"]

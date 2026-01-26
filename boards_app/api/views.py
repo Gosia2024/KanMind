@@ -1,45 +1,60 @@
-from django.db.models import Count, Q
-from rest_framework.permissions import IsAuthenticated
+
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
+from django.db.models import Count
 
 from boards_app.models import Board
-from .permissions import IsBoardMemberOrOwner, IsBoardOwner
-from .serializers import BoardCreateUpdateSerializer, BoardDetailSerializer, BoardListSerializer
+from boards_app.api.permissions import IsBoardMemberOrOwner, IsBoardOwner
+from .serializers import (
+    BoardListSerializer,
+    BoardDetailSerializer,
+    BoardCreateUpdateSerializer,
+    BoardUpdateResponseSerializer,
+)
 
 
 class BoardViewSet(ModelViewSet):
-    """
-    CRUD endpoints for boards.
+    queryset = Board.objects.all()
 
-    Access rules:
-    - list/create: authenticated users
-    - retrieve/update: board member or owner
-    - delete: owner only
-    """
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        qs = Board.objects.filter(Q(owner=user) | Q(members=user)).distinct()
-
-        # annotate counts for list/create responses
-        return qs.annotate(
-            member_count=Count("members", distinct=True),
-            ticket_count=Count("tasks", distinct=True),
-            tasks_to_do_count=Count("tasks", filter=Q(tasks__status="to-do"), distinct=True),
-            tasks_high_prio_count=Count("tasks", filter=Q(tasks__priority="high"), distinct=True),
-        )
-
-    def get_serializer_class(self):
-        if self.action in ["list"]:
-            return BoardListSerializer
-        if self.action in ["retrieve"]:
-            return BoardDetailSerializer
-        return BoardCreateUpdateSerializer
-
+    # permissions
     def get_permissions(self):
+        if self.action in ["list", "create"]:
+            return [IsAuthenticated()]
+
+        if self.action in ["retrieve", "update", "partial_update"]:
+            return [IsAuthenticated(), IsBoardMemberOrOwner()]
+
         if self.action == "destroy":
             return [IsAuthenticated(), IsBoardOwner()]
-        if self.action in ["retrieve", "partial_update"]:
-            return [IsAuthenticated(), IsBoardMemberOrOwner()]
-        return [IsAuthenticated()]
+
+        return super().get_permissions()
+
+    #  serializers
+    def get_serializer_class(self):
+        if self.action == "list":
+            return BoardListSerializer
+
+        if self.action == "retrieve":
+            return BoardDetailSerializer
+
+        if self.action in ["create", "update", "partial_update"]:
+            return BoardCreateUpdateSerializer
+
+        return BoardDetailSerializer
+
+    #  update response
+    def update(self, request, *args, **kwargs):
+        super().update(request, *args, **kwargs)
+        serializer = BoardUpdateResponseSerializer(
+            self.get_object(),
+            context={"request": request},
+        )
+        return Response(serializer.data)
+
+    # retrieve with comments_count
+    def retrieve(self, request, *args, **kwargs):
+        board = self.get_object()
+        
+        serializer = self.get_serializer(board)
+        return Response(serializer.data)
