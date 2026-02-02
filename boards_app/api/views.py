@@ -11,6 +11,7 @@ from .serializers import (
     BoardCreateUpdateSerializer,
     BoardUpdateResponseSerializer,
 )
+from django.db import models
 
 
 class BoardViewSet(ModelViewSet):
@@ -57,3 +58,36 @@ class BoardViewSet(ModelViewSet):
         
         serializer = self.get_serializer(board)
         return Response(serializer.data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        board = serializer.save()
+
+        # annotate board to match documentation response
+        board = (
+            Board.objects
+            .filter(id=board.id)
+            .annotate(
+                member_count=Count("members", distinct=True),
+                ticket_count=Count("tasks", distinct=True),
+                tasks_to_do_count=Count(
+                    "tasks",
+                    filter=models.Q(tasks__status="to-do"),
+                    distinct=True,
+                ),
+                tasks_high_prio_count=Count(
+                    "tasks",
+                    filter=models.Q(tasks__priority="high"),
+                    distinct=True,
+                ),
+            )
+            .first()
+        )
+
+        response_serializer = BoardListSerializer(
+            board,
+            context={"request": request},
+        )
+
+        return Response(response_serializer.data, status=201)
