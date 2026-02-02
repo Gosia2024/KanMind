@@ -70,25 +70,31 @@ class BoardCreateUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
-class BoardDetailSerializer(serializers.ModelSerializer):
-    """
-    Detailed board view including members and tasks.
-    """
-    owner_id = serializers.IntegerField(source="owner.id", read_only=True)
-    members = UserPublicSerializer(many=True, read_only=True)
-    tasks = TaskSerializer(many=True, read_only=True)
+# class BoardDetailSerializer(serializers.ModelSerializer):
+#     members = UserPublicSerializer(many=True, read_only=True)
+#     tasks = serializers.SerializerMethodField()
 
-    class Meta:
-        model = Board
-        fields = ["id", "title", "owner_id", "members", "tasks"]
+#     class Meta:
+#         model = Board
+#         fields = [
+#             "id",
+#             "title",
+#             "owner_id",
+#             "members",
+#             "tasks",
+#         ]
 
-class BoardUpdateResponseSerializer(serializers.ModelSerializer):
-    """
-    Serializer used as response after board update.
-    """
-    owner_data = UserPublicSerializer(source="owner", read_only=True)
-    members_data = UserPublicSerializer(source="members", many=True, read_only=True)
+#     def get_tasks(self, obj):
+#         tasks = self.context.get("tasks", obj.tasks.all())
+#         return TaskSerializer(tasks, many=True).data
 
-    class Meta:
-        model = Board
-        fields = ["id", "title", "owner_data", "members_data"]
+# class BoardUpdateResponseSerializer(serializers.ModelSerializer):
+#     """
+#     Serializer used as response after board update.
+#     """
+#     owner_data = UserPublicSerializer(source="owner", read_only=True)
+#     members_data = UserPublicSerializer(source="members", many=True, read_only=True)
+
+#     class Meta:
+#         model = Board
+#         fields = ["id", "title", "owner_data", "members_data"]

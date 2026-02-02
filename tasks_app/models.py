@@ -48,6 +48,10 @@ class Task(models.Model):
         related_name="created_tasks",
     )
 
+  
+    def comments_count(self):
+        return self.comments.count()
+
     class Meta:
         ordering = ["id"]
         verbose_name = "Task"
@@ -67,3 +71,5 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment #{self.id}"
+    
+   

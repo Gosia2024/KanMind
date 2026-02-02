@@ -120,5 +120,6 @@ class TaskSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-from django.db.models import Count
 
+
+    comments_count = serializers.IntegerField(read_only=True)
