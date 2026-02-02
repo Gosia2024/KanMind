@@ -186,3 +186,4 @@ Authorization: Token <your_token>
 * `403 FORBIDDEN` – permission denied
 * `404 NOT FOUND` – resource does not exist
 
+.
