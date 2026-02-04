@@ -6,6 +6,7 @@ from django.db.models import Count, Q
 from boards_app.models import Board
 from boards_app.api.permissions import IsBoardMemberOrOwner, IsBoardOwner
 from .serializers import (
+    BoardDetailSerializer,
     BoardListSerializer,
     BoardCreateUpdateSerializer,
 )
@@ -24,13 +25,23 @@ class BoardViewSet(ModelViewSet):
             return [IsAuthenticated(), IsBoardOwner()]
         return super().get_permissions()
 
-    # serializers
+    # # serializers
+    # def get_serializer_class(self):
+    #     if self.action in ["list", "retrieve"]:
+    #         return BoardListSerializer
+    #     if self.action in ["create", "update", "partial_update"]:
+    #         return BoardCreateUpdateSerializer
+    #     return BoardListSerializer
+
     def get_serializer_class(self):
-        if self.action in ["list", "retrieve"]:
-            return BoardListSerializer
+        if self.action == "list":
+         return BoardListSerializer
+        if self.action == "retrieve":
+         return BoardDetailSerializer
         if self.action in ["create", "update", "partial_update"]:
-            return BoardCreateUpdateSerializer
+         return BoardCreateUpdateSerializer
         return BoardListSerializer
+
 
     # GET /api/boards/
     def get_queryset(self):

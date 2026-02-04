@@ -19,7 +19,7 @@ class CommentSerializer(serializers.ModelSerializer):
     - GET /api/tasks/{task_id}/comments/
     - POST /api/tasks/{task_id}/comments/
 
-    Zwraca:
+    return:
     {
         "id": 1,
         "created_at": "...",

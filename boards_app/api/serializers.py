@@ -98,3 +98,17 @@ class BoardCreateUpdateSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Board
 #         fields = ["id", "title", "owner_data", "members_data"]
+class BoardDetailSerializer(serializers.ModelSerializer):
+    owner_id = serializers.IntegerField(source="owner.id", read_only=True)
+    members = UserPublicSerializer(many=True, read_only=True)
+    tasks = TaskSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Board
+        fields = [
+            "id",
+            "title",
+            "owner_id",
+            "members",
+            "tasks",
+        ]
