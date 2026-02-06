@@ -80,7 +80,6 @@ API will be available at:
 ## 🧱 Tech Stack
 
 * **Python** 3.10+
-
 - **Django**
 - **Django REST Framework**
 - **Token Authentication (DRF)**
