@@ -22,12 +22,20 @@ class TaskViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsTaskBoardMember]
 
     def get_queryset(self):
-        user = self.request.user
+        # user = self.request.user
+        # return (
+        #     Task.objects.filter(Q(board__owner=user) | Q(board__members=user))
+        #     .distinct()
+        #     .annotate(comments_count=Count("comments", distinct=True))
+        # )
+
+    
         return (
-            Task.objects.filter(Q(board__owner=user) | Q(board__members=user))
-            .distinct()
-            .annotate(comments_count=Count("comments", distinct=True))
-        )
+        Task.objects
+        .all()
+        .annotate(comments_count=Count("comments", distinct=True))
+    )
+
 
     def destroy(self, request, *args, **kwargs):
         task = self.get_object()
@@ -74,9 +82,22 @@ class TaskCommentListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Comment.objects.filter(
-            task_id=self.kwargs["task_id"]
-        ).order_by("created_at")
+        # return Comment.objects.filter(
+        #     task_id=self.kwargs["task_id"]
+        # ).order_by("created_at")
+      
+        task = get_object_or_404(Task, id=self.kwargs["task_id"])
+
+        if not (
+        task.board.owner == self.request.user or
+        task.board.members.filter(id=self.request.user.id).exists()
+        ):
+         raise PermissionDenied("You do not have access to this task.")
+
+        return Comment.objects.filter(task=task).order_by("created_at")
+       
+
+
 
     def perform_create(self, serializer):
         task = get_object_or_404(Task, id=self.kwargs["task_id"])
