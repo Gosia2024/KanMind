@@ -5,7 +5,6 @@ from tasks_app.api.serializers import TaskSerializer
 
 User = get_user_model()
 
-
 class UserPublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -69,24 +68,6 @@ class BoardCreateUpdateSerializer(serializers.ModelSerializer):
             instance.members.set(members)
         return instance
 
-
-# class BoardDetailSerializer(serializers.ModelSerializer):
-#     members = UserPublicSerializer(many=True, read_only=True)
-#     tasks = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = Board
-#         fields = [
-#             "id",
-#             "title",
-#             "owner_id",
-#             "members",
-#             "tasks",
-#         ]
-
-#     def get_tasks(self, obj):
-#         tasks = self.context.get("tasks", obj.tasks.all())
-#         return TaskSerializer(tasks, many=True).data
 
 class BoardUpdateResponseSerializer(serializers.ModelSerializer):
     """

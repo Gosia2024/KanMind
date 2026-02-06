@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.db import models
-
 from boards_app.models import Board
-
 
 class Task(models.Model):
     """
@@ -15,13 +13,11 @@ class Task(models.Model):
         ("review", "Review"),
         ("done", "Done"),
     ]
-
     PRIORITY_CHOICES = [
         ("low", "Low"),
         ("medium", "Medium"),
         ("high", "High"),
     ]
-
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="tasks") # Parent board
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -47,16 +43,12 @@ class Task(models.Model):
         on_delete=models.CASCADE,
         related_name="created_tasks",
     )
-
-  
     def comments_count(self):
         return self.comments.count()
-
     class Meta:
         ordering = ["id"]
         verbose_name = "Task"
         verbose_name_plural = "Tasks"
-
     def __str__(self):
         return self.title
     
@@ -65,10 +57,8 @@ class Comment(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comments")
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-
     class Meta:
         ordering = ["created_at"]
-
     def __str__(self):
         return f"Comment #{self.id}"
     
