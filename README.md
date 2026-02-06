@@ -25,10 +25,11 @@ cd KanMind
 
 ## 2. Create virtual environment
 
+- Windows
+
 ```bash
 python -m venv .venv
-source .venv/bin/activate        # Linux / macOS
-.venv\Scripts\activate           # Windows
+.venv\Scripts\activate
 ```
 
 ### 3. Install dependencies
